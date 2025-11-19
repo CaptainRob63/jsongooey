@@ -1,4 +1,4 @@
-package nhf.parser;
+package jsongooey.parser;
 
 public class Token {
     private TokenType type;

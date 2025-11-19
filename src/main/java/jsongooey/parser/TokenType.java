@@ -1,4 +1,4 @@
-package nhf.parser;
+package jsongooey.parser;
 
 public enum TokenType {
     OPEN_BRACE,
@@ -7,12 +7,10 @@ public enum TokenType {
     CLOSE_SQUARE_BRACKET,
     COLON,
     COMMA,
-    QUOTE,
 
-
-    IDENTIFIER,
     NUMBER,
     STRING,
+    BOOLEAN,
 
     EOF
 }

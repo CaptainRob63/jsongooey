@@ -1,6 +1,4 @@
-package nhf.parser;
-
-import java.util.List;
+package jsongooey.parser;
 
 public class Parser {
   private String text;
