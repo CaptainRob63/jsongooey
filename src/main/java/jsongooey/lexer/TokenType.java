@@ -1,4 +1,4 @@
-package jsongooey.parser;
+package jsongooey.lexer;
 
 public enum TokenType {
     OPEN_BRACE,
@@ -7,10 +7,12 @@ public enum TokenType {
     CLOSE_SQUARE_BRACKET,
     COLON,
     COMMA,
+    TRUE,
+    FALSE,
+    NULL,
 
     NUMBER,
     STRING,
-    BOOLEAN,
 
     EOF
 }

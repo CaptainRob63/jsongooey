@@ -1,18 +1,19 @@
-package jsongooey.parser;
+package jsongooey.lexer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static jsongooey.parser.TokenType.*;
+import static jsongooey.lexer.TokenType.*;
 
 public class Lexer {
     private String source;
     private List<Token> tokens = new ArrayList<>();
     private int start = 0;
     private int current = 0;
-    private int end = 0;
     private int line = 1;
+
+    private List<LexerError> errors = new ArrayList<>();
 
     public Lexer(String source) {
         this.source = source.replaceAll("[\t\r ]", "");
@@ -43,7 +44,15 @@ public class Lexer {
     }
 
     private char advance() {
+        if (source.charAt(current) == '\n') line++;
         return source.charAt(current++);
+    }
+
+    private char advance(int times) {
+        for (int i = 0; i < times - 1; i++) {
+            advance();
+        }
+        return advance();
     }
 
     private char peek() {
@@ -55,17 +64,24 @@ public class Lexer {
         return matches;
     }
 
+    private String lexeme() {
+        return source.substring(start, current);
+    }
+
     private void string() {
         while (peek() != '"' && !isAtEnd()) {
             if (peek() == '\n') line++;
             advance();
         }
 
-        if (isAtEnd())  ; // TODO: error
+        if (isAtEnd()) {
+            report("unterminated string");
+            return;
+        }
 
-        advance();
+        advance(); // closing "
 
-        String lexeme = source.substring(start, current);
+        String lexeme = lexeme();
         addToken(new Token(STRING, lexeme, lexeme, line));
     }
 
@@ -79,7 +95,7 @@ public class Lexer {
 
     private void matchAtLeastOneDigit() {
         if (!isDigit(peek())) {
-            // TODO error
+            report("atleast one digit was expected");
             return;
         }
         matchDigits();
@@ -101,6 +117,8 @@ public class Lexer {
     }
 
     private void number(char currentChar) {
+        if (currentChar == '-') currentChar = advance();
+
         if (currentChar == '0') {
             matchFractionalAndExponent();
         }
@@ -111,12 +129,46 @@ public class Lexer {
         }
 
         else {
-            // TODO error
+            report("invalid starting character for number");
+            return;
         }
 
-        String lexeme = source.substring(start, current);
+        String lexeme = lexeme();
         addToken(new Token(NUMBER, lexeme, Double.parseDouble(lexeme), line));
 
+    }
+
+    private void boolTrue() {
+        advance(3);
+
+        if (!lexeme().equals("true")) {
+            report("invalid true keyword");
+            return;
+        }
+
+        addToken(new Token(TRUE, "true", true, line));
+    }
+
+    private void boolFalse() {
+        advance(4);
+
+        if (!lexeme().equals("false")) {
+            report("invalid false keyword");
+            return;
+        }
+
+        addToken(new Token(FALSE, "false", false, line));
+    }
+
+    private void jsonNull() {
+        advance(3);
+
+        if (!lexeme().equals("null")) {
+            report("invalid null keyword");
+            return;
+        }
+
+        addToken(new Token(NULL, "null", null, line));
     }
 
     public void lexTokens() {
@@ -129,31 +181,39 @@ public class Lexer {
 
     private void lexToken() {
         char c = advance();
-        switch (c) {
-            case '{' -> addToken(new Token(OPEN_BRACE, "{", null, line));
-            case '}' -> addToken(new Token(CLOSE_BRACE, "}", null, line));
-            case '[' -> addToken(new Token(OPEN_SQUARE_BRACKET, "[", null, line));
-            case ']' -> addToken(new Token(CLOSE_SQUARE_BRACKET, "]", null, line));
-            case ':' -> addToken(new Token(COLON, ":", null, line));
-            case ',' -> addToken(new Token(COMMA, ",", null, line));
-            case '"' -> string();
-            case '-' -> number(c);
-            default ->  {
-                if (isDigit(c)) {
-                    number(c);
-                } else {
-                    // TODO: error
-                    System.out.println("Unexpected character: " + c);
+
+        try {
+
+            switch (c) {
+                case '{' -> addToken(new Token(OPEN_BRACE, "{", null, line));
+                case '}' -> addToken(new Token(CLOSE_BRACE, "}", null, line));
+                case '[' -> addToken(new Token(OPEN_SQUARE_BRACKET, "[", null, line));
+                case ']' -> addToken(new Token(CLOSE_SQUARE_BRACKET, "]", null, line));
+                case ':' -> addToken(new Token(COLON, ":", null, line));
+                case ',' -> addToken(new Token(COMMA, ",", null, line));
+                case '"' -> string();
+                case 't' -> boolTrue();
+                case 'f' -> boolFalse();
+                case 'n' -> jsonNull();
+                case '-' -> number(c);
+                default -> {
+                    if (isDigit(c)) {
+                        number(c);
+                    } else {
+                        report("Unexpected character: " + c);
+                    }
                 }
             }
+        } catch (LexerErrorException e) {
+            while (advance() != '\n');
         }
 
     }
+
+    private void report(String message) throws RuntimeException {
+        errors.add(new LexerError(message, line));
+        throw new RuntimeException();
+    }
 }
 
-/*
-    TODO:
-    error
-    boolean
- */
 

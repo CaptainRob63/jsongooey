@@ -1,11 +1,16 @@
-package jsongooey.parser;
+package jsongooey.lexer;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import jsongooey.parser.*;
-import static jsongooey.parser.TokenType.*;
+import static jsongooey.lexer.TokenType.*;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -29,7 +34,7 @@ public class LexerUnitTest {
 
     @Test
     public void crazy() {
-        String src = "{   \"sigma\" : 6.3}";
+        String src = "{   \"sigma\" : -6.3}";
 
         var expected = List.of(
                 OPEN_BRACE,
@@ -41,6 +46,20 @@ public class LexerUnitTest {
         );
 
         assertTokenTypes(src, expected);
+    }
+
+    @Test
+    public void fromExample() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/example.json")) {
+            Assert.assertNotNull(is);
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+
+            Lexer lexer = new Lexer(content);
+            lexer.lexTokens();
+
+            System.out.println(lexer.getTokens());
+
+        }
     }
 
     private void assertTokenTypes(String src, List<TokenType> expected) {

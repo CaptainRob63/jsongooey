@@ -1,4 +1,4 @@
-package jsongooey.parser;
+package jsongooey.lexer;
 
 public class Token {
     private TokenType type;
@@ -33,6 +33,8 @@ public class Token {
 
     @Override
     public String toString() {
-        return type + " " + lexeme + " " + literal;
+        if (type == TokenType.STRING) return "STRING(" + literal.toString() + ")";
+        if (type == TokenType.NUMBER) return "NUMBER(" + literal.toString() + ")";
+        else                          return type.toString();
     }
 }
