@@ -23,6 +23,10 @@ public class Lexer {
         return Collections.unmodifiableList(tokens);
     }
 
+    public List<LexerError> getErrors() {
+        return Collections.unmodifiableList(errors);
+    }
+
     private void addToken(Token token) {
         tokens.add(token);
     }
@@ -44,6 +48,7 @@ public class Lexer {
     }
 
     private char advance() {
+        if(isAtEnd()) return '\0';
         if (source.charAt(current) == '\n') line++;
         return source.charAt(current++);
     }
@@ -56,6 +61,7 @@ public class Lexer {
     }
 
     private char peek() {
+        if (isAtEnd()) return '\0';
         return source.charAt(current);
     }
     private boolean match(char expected) {
@@ -69,7 +75,7 @@ public class Lexer {
     }
 
     private void string() {
-        while (peek() != '"' && !isAtEnd()) {
+        while (!isAtEnd() && peek() != '"') {
             if (peek() == '\n') line++;
             advance();
         }
@@ -107,13 +113,18 @@ public class Lexer {
     }
 
     private void matchFractionalAndExponent() {
-        if (match('.')) {
+        boolean fractional = match('.');
+        if (fractional) {
             matchAtLeastOneDigit();
+        }
+
+        boolean exponential = match('e') || match('E');
+        if (exponential) {
             exponent();
         }
-        else if (match('e') || match('E')) {
-            exponent();
-        }
+
+
+        if (!fractional && !exponential) report("invalid fractional or exponent");
     }
 
     private void number(char currentChar) {
@@ -196,23 +207,26 @@ public class Lexer {
                 case 'f' -> boolFalse();
                 case 'n' -> jsonNull();
                 case '-' -> number(c);
+                case '\n' -> {
+                    return;
+                }
                 default -> {
                     if (isDigit(c)) {
                         number(c);
                     } else {
-                        report("Unexpected character: " + c);
+                        report("unexpected character: " + c);
                     }
                 }
             }
         } catch (LexerErrorException e) {
-            while (advance() != '\n');
+            while (!isAtEnd() && advance() != '\n');
         }
 
     }
 
-    private void report(String message) throws RuntimeException {
+    private void report(String message) throws LexerErrorException {
         errors.add(new LexerError(message, line));
-        throw new RuntimeException();
+        throw new LexerErrorException();
     }
 }
 

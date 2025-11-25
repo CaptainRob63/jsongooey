@@ -49,6 +49,50 @@ public class LexerUnitTest {
     }
 
     @Test
+    public void various() {
+        String src = "true false null";
+
+        var expected = List.of(
+                TRUE,
+                FALSE,
+                NULL,
+                EOF
+        );
+
+        assertTokenTypes(src, expected);
+    }
+
+    @Test
+    public void unterminatedString() {
+        String src = "{}}}[]\"awdol][[";
+
+        assertHasError(src, new LexerError("unterminated string", 1));
+    }
+
+    @Test
+    public void wrongIdentifiers() {
+        String src = "tRue \n fal31 \n nual";
+
+        assertHasError(src, new LexerError("invalid true keyword", 1));
+        assertHasError(src, new LexerError("invalid false keyword", 2));
+        assertHasError(src, new LexerError("invalid null keyword", 3));
+    }
+
+    @Test
+    public void unexpectedChar() {
+        String src = "[\"six\",\n\n \"seven\", ?]";
+
+        assertHasError(src, new LexerError("unexpected character: ?", 3));
+    }
+
+    @Test
+    public void wrongExponent() {
+        String src = "\n62.23e";
+
+        assertHasError(src, new LexerError("atleast one digit was expected", 2));
+    }
+
+    @Test
     public void fromExample() throws IOException {
         try (InputStream is = getClass().getResourceAsStream("/example.json")) {
             Assert.assertNotNull(is);
@@ -60,6 +104,12 @@ public class LexerUnitTest {
             System.out.println(lexer.getTokens());
 
         }
+    }
+
+    private void assertHasError(String src, LexerError expected) {
+        Lexer lexer = new Lexer(src);
+        lexer.lexTokens();
+        Assert.assertTrue(lexer.getErrors().contains(expected));
     }
 
     private void assertTokenTypes(String src, List<TokenType> expected) {
