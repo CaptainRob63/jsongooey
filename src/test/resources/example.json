@@ -1,26 +1,84 @@
-{"widget": {
-  "debug": "on",
-  "window": {
-    "title": "Sample Konfabulator Widget",
-    "name": "main_window",
-    "width": 500,
-    "height": 500
+{
+  "generatedBy" : "gemini",
+  "prompt" : "generate a relatively big json file that uses all of json features",
+
+  "title": "Comprehensive JSON Features Example File",
+  "description": "This file demonstrates all standard JSON data types and structures in a nested format.",
+  "metadata": {
+    "version": 2.5,
+    "isActive": true,
+    "lastUpdated": "2025-11-26T09:56:00Z",
+    "notes": null
   },
-  "image": {
-    "src": "Images/Sun.png",
-    "name": "sun1",
-    "hOffset": 250,
-    "vOffset": 250,
-    "alignment": "center"
+  "dataTypesCoverage": [
+    "string",
+    "number",
+    "boolean",
+    "null",
+    "object",
+    "array"
+  ],
+  "complexData": {
+    "users": [
+      {
+        "id": 101,
+        "name": "Alice Smith",
+        "age": 30,
+        "isVerified": true,
+        "balance": 1500.75,
+        "address": {
+          "street": "123 Main St.",
+          "city": "Anytown",
+          "zipCode": "12345"
+        },
+        "tags": ["developer", "tester", "support"],
+        "spouseName": null
+      },
+      {
+        "id": 102,
+        "name": "Bob Johnson",
+        "age": 45,
+        "isVerified": false,
+        "balance": 890.10,
+        "address": {
+          "street": "456 Oak Ave.",
+          "city": "Otherville",
+          "zipCode": "67890"
+        },
+        "tags": ["manager", "sales"],
+        "spouseName": "Jane Johnson"
+      }
+    ],
+    "products": [
+      {
+        "productId": "PROD-A-789",
+        "productName": "Laptop",
+        "price": 999.99,
+        "availableColors": ["Black", "Silver"],
+        "specifications": {
+          "cpu": "Intel i7",
+          "ramGB": 16,
+          "storageGB": 512
+        }
+      },
+      {
+        "productId": "PROD-B-123",
+        "productName": "Mouse",
+        "price": 25.50,
+        "availableColors": ["White", "Black"],
+        "specifications": null
+      }
+    ]
   },
-  "text": {
-    "data": "Click Here",
-    "size": 36,
-    "style": "bold",
-    "name": "text1",
-    "hOffset": 250,
-    "vOffset": 100,
-    "alignment": "center",
-    "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
+  "stringEscapes": {
+    "quotes": "String with escaped double quotes: \"Hello World\"",
+    "backslash": "String with escaped backslash: \\\\",
+    "newLine": "String with a new line character: line1\\nline2",
+    "tab": "String with a tab character: line1\\tline2",
+    "unicode": "String with a Unicode character (e.g., Euro sign): \\u20AC"
+  },
+  "emptyStructures": {
+    "emptyObject": {},
+    "emptyArray": []
   }
-}}
+}

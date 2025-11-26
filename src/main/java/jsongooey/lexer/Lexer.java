@@ -16,7 +16,8 @@ public class Lexer {
     private List<LexerError> errors = new ArrayList<>();
 
     public Lexer(String source) {
-        this.source = source.replaceAll("[\t\r ]", "");
+        this.source = source;
+        //this.source = source.replaceAll("[\t\r ]", "");
     }
 
     public List<Token> getTokens() {
@@ -39,6 +40,9 @@ public class Lexer {
             case CLOSE_SQUARE_BRACKET -> addToken(new Token(CLOSE_SQUARE_BRACKET, "]", null, line));
             case COLON -> addToken(new Token(COLON, ":", null, line));
             case COMMA -> addToken(new Token(COMMA, ",", null, line));
+            case TRUE -> addToken(new Token(TRUE, "true", true, line));
+            case FALSE -> addToken(new Token(FALSE, "false", false, line));
+            case NULL -> addToken(new Token(NULL, "null", null, line));
             default -> throw new IllegalArgumentException("Unexpected token type: " + type);
         }
     }
@@ -49,15 +53,7 @@ public class Lexer {
 
     private char advance() {
         if(isAtEnd()) return '\0';
-        if (source.charAt(current) == '\n') line++;
         return source.charAt(current++);
-    }
-
-    private char advance(int times) {
-        for (int i = 0; i < times - 1; i++) {
-            advance();
-        }
-        return advance();
     }
 
     private char peek() {
@@ -70,12 +66,20 @@ public class Lexer {
         return matches;
     }
 
+    private boolean match(String expected) {
+        for (Character c : expected.toCharArray()) {
+            if (!match(c)) return false;
+        }
+        return true;
+    }
+
     private String lexeme() {
         return source.substring(start, current);
     }
 
     private void string() {
-        while (!isAtEnd() && peek() != '"') {
+        while (! (isAtEnd() || peek() == '"') ) {
+            if (peek() == '\\') advance();
             if (peek() == '\n') line++;
             advance();
         }
@@ -108,7 +112,7 @@ public class Lexer {
     }
 
     private void exponent() {
-        if (!match('-')) match('+');
+        boolean sign = match('+') || match('-');
         matchAtLeastOneDigit();
     }
 
@@ -122,9 +126,6 @@ public class Lexer {
         if (exponential) {
             exponent();
         }
-
-
-        if (!fractional && !exponential) report("invalid fractional or exponent");
     }
 
     private void number(char currentChar) {
@@ -150,36 +151,31 @@ public class Lexer {
     }
 
     private void boolTrue() {
-        advance(3);
 
-        if (!lexeme().equals("true")) {
+        if (!match("rue")) {
             report("invalid true keyword");
             return;
         }
 
-        addToken(new Token(TRUE, "true", true, line));
+        addToken(TRUE);
     }
 
     private void boolFalse() {
-        advance(4);
-
-        if (!lexeme().equals("false")) {
+        if (!match("alse")) {
             report("invalid false keyword");
             return;
         }
 
-        addToken(new Token(FALSE, "false", false, line));
+        addToken(FALSE);
     }
 
     private void jsonNull() {
-        advance(3);
-
-        if (!lexeme().equals("null")) {
+        if (!match("ull")) {
             report("invalid null keyword");
             return;
         }
 
-        addToken(new Token(NULL, "null", null, line));
+        addToken(NULL);
     }
 
     public void lexTokens() {
@@ -196,20 +192,20 @@ public class Lexer {
         try {
 
             switch (c) {
-                case '{' -> addToken(new Token(OPEN_BRACE, "{", null, line));
-                case '}' -> addToken(new Token(CLOSE_BRACE, "}", null, line));
-                case '[' -> addToken(new Token(OPEN_SQUARE_BRACKET, "[", null, line));
-                case ']' -> addToken(new Token(CLOSE_SQUARE_BRACKET, "]", null, line));
-                case ':' -> addToken(new Token(COLON, ":", null, line));
-                case ',' -> addToken(new Token(COMMA, ",", null, line));
+                case '{' -> addToken(OPEN_BRACE);
+                case '}' -> addToken(CLOSE_BRACE);
+                case '[' -> addToken(OPEN_SQUARE_BRACKET);
+                case ']' -> addToken(CLOSE_SQUARE_BRACKET);
+                case ':' -> addToken(COLON);
+                case ',' -> addToken(COMMA);
                 case '"' -> string();
                 case 't' -> boolTrue();
                 case 'f' -> boolFalse();
                 case 'n' -> jsonNull();
                 case '-' -> number(c);
-                case '\n' -> {
-                    return;
-                }
+                case '\t', '\r', ' ' -> {/* skip whitespace */}
+                case '\n' -> line++;
+
                 default -> {
                     if (isDigit(c)) {
                         number(c);
@@ -217,9 +213,11 @@ public class Lexer {
                         report("unexpected character: " + c);
                     }
                 }
+
             }
-        } catch (LexerErrorException e) {
-            while (!isAtEnd() && advance() != '\n');
+        } catch (LexerErrorException _) {
+            while (!isAtEnd() && advance() != '\n')/* skip line if error found */;
+            line++;
         }
 
     }
@@ -229,5 +227,6 @@ public class Lexer {
         throw new LexerErrorException();
     }
 }
+
 
 

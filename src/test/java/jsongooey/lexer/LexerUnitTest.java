@@ -98,11 +98,7 @@ public class LexerUnitTest {
             Assert.assertNotNull(is);
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
-            Lexer lexer = new Lexer(content);
-            lexer.lexTokens();
-
-            System.out.println(lexer.getTokens());
-
+            assertNoErrors(content);
         }
     }
 
@@ -110,6 +106,12 @@ public class LexerUnitTest {
         Lexer lexer = new Lexer(src);
         lexer.lexTokens();
         Assert.assertTrue(lexer.getErrors().contains(expected));
+    }
+
+    private void assertNoErrors(String src) {
+        Lexer lexer = new Lexer(src);
+        lexer.lexTokens();
+        Assert.assertTrue(lexer.getErrors().isEmpty());
     }
 
     private void assertTokenTypes(String src, List<TokenType> expected) {
