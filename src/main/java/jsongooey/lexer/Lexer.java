@@ -7,7 +7,7 @@ import java.util.List;
 import static jsongooey.lexer.TokenType.*;
 
 public class Lexer {
-    private String source;
+    private final String source;
     private List<Token> tokens = new ArrayList<>();
     private int start = 0;
     private int current = 0;
@@ -17,7 +17,6 @@ public class Lexer {
 
     public Lexer(String source) {
         this.source = source;
-        //this.source = source.replaceAll("[\t\r ]", "");
     }
 
     public List<Token> getTokens() {
