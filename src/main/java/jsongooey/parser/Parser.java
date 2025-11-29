@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class Parser {
     private final List<Token> tokens;
-    private ObjectValue object;
+    private ObjectValue object =  new ObjectValue();
 
     private int start = 0;
     private int current = 0;
@@ -57,9 +57,9 @@ public class Parser {
 
     private boolean check(TokenType... types) {
         for (TokenType type : types) {
-            if (peek().getType() != type) return false;
+            if (peek().getType() == type) return true;
         }
-        return true;
+        return false;
     }
 
     private Token mustMatch(TokenType type, String errorMessage) {
@@ -82,7 +82,10 @@ public class Parser {
     }
 
     private Optional<BooleanValue> booleanValue() {
-        if (check(FALSE, TRUE)) return Optional.of(new BooleanValue( (boolean) peekPrevious().getLiteral() ));
+        if (check(FALSE, TRUE)) {
+            advance();
+            return Optional.of(new BooleanValue( (boolean) peekPrevious().getLiteral() ));
+        }
         return Optional.empty();
     }
 
@@ -133,7 +136,7 @@ public class Parser {
         if(!match(OPEN_BRACE)) return Optional.empty();
 
         ObjectValue newObject = new ObjectValue();
-        Optional<Member> member ;
+        Optional<Member> member = Optional.empty();
         try {
             member = member();
         } catch (SyntaxErrorException _) {
@@ -141,7 +144,7 @@ public class Parser {
         }
 
         if (member.isPresent()) {
-            object.addMember(member.get());
+            newObject.addMember(member.get());
 
             while(match(COMMA)) {
                 try {
@@ -151,7 +154,7 @@ public class Parser {
                 }
 
                 if (member.isEmpty()) report("object has trailing comma");
-                else object.addMember(member.get());
+                else newObject.addMember(member.get());
             }
 
         }
@@ -192,7 +195,7 @@ public class Parser {
 
 
     public void parse() {
-
+        object = object().orElse(new ObjectValue());
     }
 
 }

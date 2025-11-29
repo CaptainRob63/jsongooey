@@ -6,4 +6,9 @@ public class NumberValue implements Value {
     public NumberValue(double value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }
