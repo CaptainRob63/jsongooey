@@ -1,7 +1,6 @@
 package jsongooey.parser;
 
 import jsongooey.jsonmodel.*;
-import jsongooey.lexer.LexerErrorException;
 import jsongooey.lexer.Token;
 import jsongooey.lexer.TokenType;
 
@@ -15,7 +14,6 @@ public class Parser {
     private final List<Token> tokens;
     private ObjectValue object =  new ObjectValue();
 
-    private int start = 0;
     private int current = 0;
 
     private List<SyntaxError> errors = new ArrayList<>();
@@ -101,9 +99,9 @@ public class Parser {
 
         Optional<Value> newValue = value();
         while(newValue.isPresent()) {
-            if (!match(COMMA)) break;
-
             array.addValue(newValue.get());
+
+            if (!match(COMMA)) break;
 
             try {
                 newValue = value();
@@ -150,7 +148,7 @@ public class Parser {
                 try {
                     member = member();
                 } catch (SyntaxErrorException _) {
-
+                    // TODO: error
                 }
 
                 if (member.isEmpty()) report("object has trailing comma");

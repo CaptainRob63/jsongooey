@@ -91,7 +91,7 @@ public class Lexer {
         advance(); // closing "
 
         String lexeme = lexeme();
-        addToken(new Token(STRING, lexeme, lexeme, line));
+        addToken(new Token(STRING, lexeme, lexeme.substring(1, lexeme.length() - 1), line));
     }
 
     private boolean isDigit(char c) {

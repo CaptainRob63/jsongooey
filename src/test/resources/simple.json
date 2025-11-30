@@ -1,0 +1,16 @@
+{
+  "string": "Hello, JSON!",
+  "number": 3.14159,
+  "true": true,
+  "false": false,
+  "null": null,
+  "array": [
+    1,
+    "two",
+    true
+  ],
+  "object": {
+    "key_a": "nested",
+    "key_b": 42
+  }
+}

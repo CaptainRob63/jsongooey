@@ -8,9 +8,6 @@ import static jsongooey.lexer.TokenType.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -94,7 +91,7 @@ public class LexerUnitTest {
 
     @Test
     public void fromExample() throws IOException {
-        try (InputStream is = getClass().getResourceAsStream("/example.json")) {
+        try (InputStream is = getClass().getResourceAsStream("/valid.json")) {
             Assert.assertNotNull(is);
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
 
@@ -119,12 +116,5 @@ public class LexerUnitTest {
         lexer.lexTokens();
 
         Assert.assertEquals(expected, lexer.getTokens().stream().map(Token::getType).toList());
-    }
-
-    private void assertTokens(String src, List<Token> expected) {
-        var lexer = new Lexer(src);
-        lexer.lexTokens();
-
-        Assert.assertEquals(expected, lexer.getTokens());
     }
 }
