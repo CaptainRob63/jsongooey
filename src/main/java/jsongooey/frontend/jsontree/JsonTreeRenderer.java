@@ -9,7 +9,8 @@ public class JsonTreeRenderer extends JPanel implements TreeCellRenderer {
     private JLabel subLabel = new JLabel();
 
     public JsonTreeRenderer() {
-        subLabel.setForeground(Color.gray);
+        label.setForeground(Color.white);
+        subLabel.setForeground(Color.lightGray);
         add(label);
         add(subLabel);
         setOpaque(false);
