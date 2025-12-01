@@ -1,6 +1,6 @@
-package jsongooey.jsonmodel;
+package jsongooey.backend.jsonmodel;
 
-import jsongooey.parser.Member;
+import jsongooey.backend.parser.Member;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,6 +8,11 @@ import java.util.Map;
 public class ObjectValue implements Value {
     // LinkedHashMap to preserve input order of members
     private Map<String, Value> members = new LinkedHashMap<>();
+
+    @Override
+    public <R> R accept(ValueVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 
     public Map<String, Value> getMembers() {
         return members;
@@ -37,6 +42,7 @@ public class ObjectValue implements Value {
         members.put(member.key(), member.value());
         return this;
     }
+
 
     @Override
     public String toString() {

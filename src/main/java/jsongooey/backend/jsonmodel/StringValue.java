@@ -1,10 +1,15 @@
-package jsongooey.jsonmodel;
+package jsongooey.backend.jsonmodel;
 
 public class StringValue implements Value {
     private String value;
 
     public StringValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public <R> R accept(ValueVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

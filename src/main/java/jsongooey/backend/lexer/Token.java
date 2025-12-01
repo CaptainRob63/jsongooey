@@ -1,4 +1,4 @@
-package jsongooey.lexer;
+package jsongooey.backend.lexer;
 
 public class Token {
     private TokenType type;

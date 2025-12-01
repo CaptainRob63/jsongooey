@@ -1,4 +1,4 @@
-package jsongooey.parser;
+package jsongooey.backend.parser;
 
 public record SyntaxError(String message, int line) {
     @Override

@@ -1,9 +1,13 @@
-package jsongooey.lexer;
+package jsongooey.backend.lexer;
 
+import jsongooey.backend.lexer.Lexer;
+import jsongooey.backend.lexer.LexerError;
+import jsongooey.backend.lexer.Token;
+import jsongooey.backend.lexer.TokenType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static jsongooey.lexer.TokenType.*;
+import static jsongooey.backend.lexer.TokenType.*;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package jsongooey.jsonmodel;
+package jsongooey.backend.jsonmodel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,15 @@ import java.util.List;
 public class ArrayValue implements Value {
     private List<Value> array = new ArrayList<>();
 
+    @Override
+    public <R> R accept(ValueVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
+
     public List<Value> getArray() {
         return array;
     }
+
     public ArrayValue addValue(Value value) {
         this.array.add(value);
         return this;

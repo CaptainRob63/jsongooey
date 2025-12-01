@@ -1,4 +1,4 @@
-package jsongooey.lexer;
+package jsongooey.backend.lexer;
 
 public record LexerError(String message, int line) {
     @Override

@@ -1,4 +1,4 @@
-package jsongooey.lexer;
+package jsongooey.backend.lexer;
 
 public enum TokenType {
     OPEN_BRACE,

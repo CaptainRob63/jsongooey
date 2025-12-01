@@ -1,10 +1,10 @@
-package jsongooey.lexer;
+package jsongooey.backend.lexer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static jsongooey.lexer.TokenType.*;
+import static jsongooey.backend.lexer.TokenType.*;
 
 public class Lexer {
     private final String source;

@@ -1,10 +1,15 @@
-package jsongooey.jsonmodel;
+package jsongooey.backend.jsonmodel;
 
 public class BooleanValue implements Value {
     private Boolean value;
 
     public BooleanValue(Boolean value) {
         this.value = value;
+    }
+
+    @Override
+    public <R> R accept(ValueVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

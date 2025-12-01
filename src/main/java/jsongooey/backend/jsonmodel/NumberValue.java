@@ -1,10 +1,15 @@
-package jsongooey.jsonmodel;
+package jsongooey.backend.jsonmodel;
 
 public class NumberValue implements Value {
     private double value;
 
     public NumberValue(double value) {
         this.value = value;
+    }
+
+    @Override
+    public <R> R accept(ValueVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

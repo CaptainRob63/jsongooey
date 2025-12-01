@@ -1,7 +1,10 @@
-package jsongooey.parser;
+package jsongooey.backend.parser;
 
-import jsongooey.jsonmodel.*;
-import jsongooey.lexer.Lexer;
+import jsongooey.backend.jsonmodel.ArrayValue;
+import jsongooey.backend.jsonmodel.NullValue;
+import jsongooey.backend.jsonmodel.ObjectValue;
+import jsongooey.backend.parser.Parser;
+import jsongooey.backend.lexer.Lexer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import static jsongooey.Util.readResourceToString;
 
 public class ParserUnitTest {
 
@@ -74,10 +79,4 @@ public class ParserUnitTest {
         Assert.assertEquals(object1, object2);
     }
 
-    private String readResourceToString(String fileName) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(fileName)) {
-            if (is == null) throw new FileNotFoundException(fileName);
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
 }

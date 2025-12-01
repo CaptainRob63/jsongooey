@@ -1,10 +1,10 @@
-package jsongooey.parser;
+package jsongooey.backend.parser;
 
-import jsongooey.jsonmodel.*;
-import jsongooey.lexer.Token;
-import jsongooey.lexer.TokenType;
+import jsongooey.backend.jsonmodel.*;
+import jsongooey.backend.lexer.Token;
+import jsongooey.backend.lexer.TokenType;
 
-import static jsongooey.lexer.TokenType.*;
+import static jsongooey.backend.lexer.TokenType.*;
 
 import java.util.ArrayList;
 import java.util.List;
