@@ -7,6 +7,10 @@ public class NumberValue implements Value {
         this.value = value;
     }
 
+    public double getValue() {
+        return value;
+    }
+
     @Override
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visit(this);

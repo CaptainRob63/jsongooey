@@ -7,6 +7,10 @@ public class BooleanValue implements Value {
         this.value = value;
     }
 
+    public Boolean getValue() {
+        return value;
+    }
+
     @Override
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visit(this);

@@ -1,18 +1,20 @@
 package jsongooey.frontend;
 
 import jsongooey.backend.jsonmodel.ObjectValue;
-import jsongooey.backend.jsonmodel.StringValue;
+import jsongooey.backend.jsonmodel.PrintVisitor;
 import jsongooey.backend.lexer.Lexer;
 import jsongooey.backend.parser.Parser;
 import jsongooey.frontend.jsontree.JsonTree;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static jsongooey.frontend.jsontree.JsonTree.createRootNode;
 
@@ -20,6 +22,7 @@ public class JsonFrame extends JFrame {
     private JButton importButton = new JButton("Import");
     private JButton exportButton = new JButton("Export");
     private JButton parseButton = new JButton("Parse");
+    private JTextField filePathField = new JTextField(30);
 
     private JsonTree jsonTree;
     private RSyntaxTextArea textArea;
@@ -44,9 +47,11 @@ public class JsonFrame extends JFrame {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(background);
         bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        bottomPanel.add(filePathField);
         bottomPanel.add(importButton);
         bottomPanel.add(exportButton);
         bottomPanel.add(parseButton);
+
 
         importButton.setBackground(darker);
         exportButton.setBackground(darker);
@@ -54,6 +59,35 @@ public class JsonFrame extends JFrame {
         importButton.setForeground(Color.WHITE);
         exportButton.setForeground(Color.WHITE);
         parseButton.setForeground(Color.WHITE);
+
+        importButton.addActionListener(e -> {
+            String filePath = filePathField.getText();
+            try {
+                textArea.setText(Files.readString(Path.of(filePath)));
+            } catch (IOException _) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "File not found!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
+
+        exportButton.addActionListener(e -> {
+            String filePath = filePathField.getText();
+            try {
+                Files.writeString(Path.of(filePath), jsonTree.getJsonObject().accept(new PrintVisitor()));
+            } catch (IOException _) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "File not found!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
+
 
         parseButton.addActionListener(e -> {
             String text = textArea.getText();
@@ -75,13 +109,7 @@ public class JsonFrame extends JFrame {
         jsonTree.setBackground(darker);
         jsonTree.setForeground(Color.WHITE);
 
-        BasicScrollBarUI scrollUI = new BasicScrollBarUI() {
-            @Override
-            protected void configureScrollBarColors() {
-                thumbColor = darker;
-                trackColor = black;
-            }
-        };
+
 
         JScrollPane textScroll = new JScrollPane(textArea);
         textScroll.setBackground(black);
@@ -90,17 +118,6 @@ public class JsonFrame extends JFrame {
         JScrollPane treeScroll = new JScrollPane(jsonTree);
         treeScroll.setBackground(black);
         treeScroll.setForeground(darker);
-
-
-        JScrollBar v1 = textScroll.getVerticalScrollBar();
-        JScrollBar h1 = textScroll.getHorizontalScrollBar();
-        JScrollBar v2 = treeScroll.getVerticalScrollBar();
-        JScrollBar h2 = treeScroll.getHorizontalScrollBar();
-
-        v1.setUI(scrollUI);
-        h1.setUI(scrollUI);
-        v2.setUI(scrollUI);
-        h2.setUI(scrollUI);
 
         JSplitPane middleSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, textScroll, treeScroll);
         middleSplitPane.setDividerSize(5);

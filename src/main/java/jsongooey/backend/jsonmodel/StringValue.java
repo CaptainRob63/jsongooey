@@ -7,6 +7,10 @@ public class StringValue implements Value {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visit(this);

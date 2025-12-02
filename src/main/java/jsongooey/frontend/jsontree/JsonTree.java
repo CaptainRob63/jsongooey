@@ -13,6 +13,10 @@ public class JsonTree extends JTree {
         setCellRenderer(new JsonTreeRenderer());
     }
 
+    public ObjectValue getJsonObject() {
+        return jsonObject;
+    }
+
     public static JsonTreeNode createRootNode(ObjectValue jsonObject) {
 
         JsonTreeNode root = new JsonTreeNode("root", "object");
