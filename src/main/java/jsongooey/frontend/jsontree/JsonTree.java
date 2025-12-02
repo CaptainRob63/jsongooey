@@ -3,6 +3,7 @@ package jsongooey.frontend.jsontree;
 import jsongooey.backend.jsonmodel.ObjectValue;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
 
 public class JsonTree extends JTree {
     private ObjectValue jsonObject;
@@ -15,6 +16,11 @@ public class JsonTree extends JTree {
 
     public ObjectValue getJsonObject() {
         return jsonObject;
+    }
+
+    public void setJsonModel (ObjectValue objectValue) {
+        this.jsonObject = objectValue;
+        this.setModel(new DefaultTreeModel(createRootNode(objectValue)));
     }
 
     public static JsonTreeNode createRootNode(ObjectValue jsonObject) {

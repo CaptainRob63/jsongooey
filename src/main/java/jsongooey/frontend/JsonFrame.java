@@ -95,7 +95,7 @@ public class JsonFrame extends JFrame {
             lexer.lexTokens();
             Parser parser = new Parser(lexer.getTokens());
             parser.parse();
-            jsonTree.setModel(new DefaultTreeModel(createRootNode(parser.getObject())));
+            jsonTree.setJsonModel(parser.getObject());
         });
 
         textArea = new RSyntaxTextArea();
