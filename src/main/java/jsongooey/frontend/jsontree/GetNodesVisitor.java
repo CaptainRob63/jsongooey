@@ -5,6 +5,13 @@ import jsongooey.backend.jsonmodel.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ValueVisitor implementation that visits any backend json value representation and returns with the swing TreeNode representation
+ * current implementation returns a list of nodes
+ * only the array and object methods return with multiple nodes, with the assumption that the caller takes care of the parent node
+ * this is for ease of use, in practice the object method is called, and then it recursively parses the ObjectValue tree
+ * and the object method ultimately provides all parent nodes
+ */
 public class GetNodesVisitor implements ValueVisitor<List<JsonTreeNode>> {
     @Override
     public List<JsonTreeNode> visit(BooleanValue boolValue) {

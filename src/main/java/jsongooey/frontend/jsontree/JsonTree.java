@@ -5,6 +5,10 @@ import jsongooey.backend.jsonmodel.ObjectValue;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 
+/**
+ * JTree extension with custom TreeRenderer
+ * some utilities for changing the model of the currently represented json object
+ */
 public class JsonTree extends JTree {
     private ObjectValue jsonObject;
 
@@ -23,6 +27,11 @@ public class JsonTree extends JTree {
         this.setModel(new DefaultTreeModel(createRootNode(objectValue)));
     }
 
+    /**
+     * uses GetNodesVisitor() to parse backend json tree to a swing TreeModel
+     * @param jsonObject json object to parse
+     * @return swing TreeNode representation
+     */
     public static JsonTreeNode createRootNode(ObjectValue jsonObject) {
 
         JsonTreeNode root = new JsonTreeNode("root", "object");

@@ -1,6 +1,9 @@
 package jsongooey.backend.jsonmodel;
 
 
+/**
+ * Visitor for serializing Value objects
+ */
 public class PrintVisitor implements ValueVisitor<String> {
     private int indent;
     private final String indentString;

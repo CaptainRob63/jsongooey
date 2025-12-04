@@ -18,6 +18,18 @@ import java.nio.file.Path;
 
 import static jsongooey.frontend.jsontree.JsonTree.createRootNode;
 
+/**
+ * the main window of the application
+ * <p>
+ * has an RSyntaxTextArea for writing and displaying json files
+ * the library JTextArea implementation is used syntax highlighting and editing utility
+ * <p>
+ * has a JTree implemented as a JsonTree with custom renderer to graphically display a json object
+ * <p>
+ * has import and export buttons and a textfield to write the filepath
+ * <p>
+ * has a parse button to run the backend parsing algorithm and change the JsonTree model
+ */
 public class JsonFrame extends JFrame {
     private JButton importButton = new JButton("Import");
     private JButton exportButton = new JButton("Export");

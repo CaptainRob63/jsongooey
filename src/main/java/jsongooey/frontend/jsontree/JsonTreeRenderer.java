@@ -4,6 +4,10 @@ import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
+/**
+ * custom renderer for JsonTree
+ * asks for a label and sublabel, with the sublabel being grayed out next to the main label
+ */
 public class JsonTreeRenderer extends JPanel implements TreeCellRenderer {
     private JLabel label = new JLabel();
     private JLabel subLabel = new JLabel();

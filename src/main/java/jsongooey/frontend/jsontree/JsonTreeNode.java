@@ -4,6 +4,10 @@ import jsongooey.backend.jsonmodel.Value;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+/**
+ * TreeNode extension with a main label and a sublabel
+ * used for showing the name and type of values in tree
+ */
 public class JsonTreeNode extends DefaultMutableTreeNode {
     private String label;
     private String sublabel;

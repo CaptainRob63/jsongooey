@@ -2,6 +2,10 @@ package jsongooey.frontend.jsontree;
 
 import jsongooey.backend.jsonmodel.*;
 
+/**
+ * return the type of the Value visited in string format
+ * used in getting the sublabel for the JsonTreeNode
+ */
 public class GetValueTypeVisitor implements ValueVisitor<String> {
 
     @Override

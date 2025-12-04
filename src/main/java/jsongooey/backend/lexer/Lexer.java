@@ -6,6 +6,10 @@ import java.util.List;
 
 import static jsongooey.backend.lexer.TokenType.*;
 
+/**
+ * constructed with the source json code as a String.
+ * after calling lexTokens() fills tokens object and adds lexical errors to errors list
+ */
 public class Lexer {
     private final String source;
     private List<Token> tokens = new ArrayList<>();
@@ -31,6 +35,10 @@ public class Lexer {
         tokens.add(token);
     }
 
+    /**
+     * wrapper function that adds the non-literal tokens just by specifying the type
+     * @param type
+     */
     private void addToken(TokenType type) {
         switch (type) {
             case OPEN_BRACE ->  addToken(new Token(OPEN_BRACE, "{", null, line));
@@ -46,25 +54,46 @@ public class Lexer {
         }
     }
 
+    /**
+     * @return whether the current pointer is at the end of the source code
+     */
     private boolean isAtEnd() {
         return current >= source.length();
     }
 
+    /**
+     * consumes the next character
+     * @return the character consumed
+     */
     private char advance() {
         if(isAtEnd()) return '\0';
         return source.charAt(current++);
     }
 
+    /**
+     * @return the next character
+     */
     private char peek() {
         if (isAtEnd()) return '\0';
         return source.charAt(current);
     }
+
+    /**
+     * consumes the next character only if it is the expected character
+     * @param expected
+     * @return whether the next token was consumed
+     */
     private boolean match(char expected) {
         boolean matches = peek() == expected;
         if (matches) advance();
         return matches;
     }
 
+    /**
+     * consumes the next sequence of characters only if they match a string
+     * @param expected
+     * @return whether the whole string was consumed
+     */
     private boolean match(String expected) {
         for (Character c : expected.toCharArray()) {
             if (!match(c)) return false;
@@ -72,10 +101,17 @@ public class Lexer {
         return true;
     }
 
+    /**
+     * @return the current lexeme outlined by the start and current pointers
+     */
     private String lexeme() {
         return source.substring(start, current);
     }
 
+    /**
+     * lexes a string literal
+     * @throws LexerErrorException if the string was unterminated
+     */
     private void string() {
         while (! (isAtEnd() || peek() == '"') ) {
             if (peek() == '\\') advance();
@@ -98,24 +134,41 @@ public class Lexer {
         return c >= '0' && c <= '9';
     }
 
+    /**
+     * consumes characters while they are digits
+     */
     private void matchDigits() {
         while (isDigit(peek())) advance();
     }
 
-    private void matchAtLeastOneDigit() {
+    /**
+     * consumes characters while they are digits
+     * expects at least one digit
+     * @throws LexerErrorException if the next token isn't a digit
+     */
+    private void matchAtLeastOneDigit() throws LexerErrorException {
         if (!isDigit(peek())) {
-            report("atleast one digit was expected");
+            report("at least one digit was expected");
             return;
         }
         matchDigits();
     }
 
-    private void exponent() {
+    /**
+     * matches the exponent part of a number, after 'E' or 'e'
+     * expects exponent to be valid
+     */
+    private void exponent() throws LexerErrorException {
         boolean sign = match('+') || match('-');
         matchAtLeastOneDigit();
     }
 
-    private void matchFractionalAndExponent() {
+    /**
+     * matches the fractional and exponent part of a number
+     * if a point is found, expects fractional part to match
+     * if an 'e' or 'E' is found, expects an exponential part to match
+     */
+    private void matchFractionalAndExponent() throws LexerErrorException {
         boolean fractional = match('.');
         if (fractional) {
             matchAtLeastOneDigit();
@@ -127,7 +180,11 @@ public class Lexer {
         }
     }
 
-    private void number(char currentChar) {
+    /**
+     * parses a number
+     * @param currentChar im a bad programmer.
+     */
+    private void number(char currentChar) throws LexerErrorException {
         if (currentChar == '-') currentChar = advance();
 
         if (currentChar == '0') {
@@ -149,7 +206,11 @@ public class Lexer {
 
     }
 
-    private void boolTrue() {
+    /**
+     * matches the string "rue"
+     * called after a 't' is found
+     */
+    private void boolTrue() throws LexerErrorException {
 
         if (!match("rue")) {
             report("invalid true keyword");
@@ -159,7 +220,11 @@ public class Lexer {
         addToken(TRUE);
     }
 
-    private void boolFalse() {
+    /**
+     * matches the string "alse".
+     * called after an 'f' is found
+     */
+    private void boolFalse() throws LexerErrorException {
         if (!match("alse")) {
             report("invalid false keyword");
             return;
@@ -167,8 +232,11 @@ public class Lexer {
 
         addToken(FALSE);
     }
-
-    private void jsonNull() {
+    /**
+     * matches the string "null".
+     * called after an 'n' is found.
+     */
+    private void jsonNull() throws LexerErrorException {
         if (!match("ull")) {
             report("invalid null keyword");
             return;
@@ -177,6 +245,9 @@ public class Lexer {
         addToken(NULL);
     }
 
+    /**
+     * lexes the given string
+     */
     public void lexTokens() {
         while (!isAtEnd()) {
             start = current;
@@ -185,6 +256,10 @@ public class Lexer {
         addToken(new Token(EOF, "",null, line));
     }
 
+    /**
+     * lexes a single token
+     * handles a lexical error by skipping the current line to find more
+     */
     private void lexToken() {
         char c = advance();
 
@@ -221,6 +296,11 @@ public class Lexer {
 
     }
 
+    /**
+     * adds a LexerError to errors and throws
+     * @param message
+     * @throws LexerErrorException
+     */
     private void report(String message) throws LexerErrorException {
         errors.add(new LexerError(message, line));
         throw new LexerErrorException();
