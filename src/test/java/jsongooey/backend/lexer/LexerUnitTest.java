@@ -90,7 +90,7 @@ public class LexerUnitTest {
     public void wrongExponent() {
         String src = "\n62.23e";
 
-        assertHasError(src, new LexerError("atleast one digit was expected", 2));
+        assertHasError(src, new LexerError("at least one digit was expected", 2));
     }
 
     @Test
