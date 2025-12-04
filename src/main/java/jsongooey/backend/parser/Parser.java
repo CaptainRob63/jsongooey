@@ -26,6 +26,10 @@ public class Parser {
         return object;
     }
 
+    public List<SyntaxError> getErrors() {
+        return errors;
+    }
+
     private boolean isAtEnd() {
         return current >= tokens.size();
     }
@@ -97,7 +101,14 @@ public class Parser {
 
         ArrayValue array = new ArrayValue();
 
-        Optional<Value> newValue = value();
+        Optional<Value> newValue = Optional.empty();
+
+        try {
+            newValue = value();
+        } catch (SyntaxErrorException e) {
+            return Optional.of(array);
+        }
+
         while(newValue.isPresent()) {
             array.addValue(newValue.get());
 
@@ -106,7 +117,7 @@ public class Parser {
             try {
                 newValue = value();
             } catch (SyntaxErrorException _) {
-                skipTo(COMMA);
+                return Optional.of(array);
             }
         }
 
@@ -138,7 +149,7 @@ public class Parser {
         try {
             member = member();
         } catch (SyntaxErrorException _) {
-            skipTo(COMMA); // just assume theres
+            return Optional.of(newObject);
         }
 
         if (member.isPresent()) {
@@ -148,7 +159,7 @@ public class Parser {
                 try {
                     member = member();
                 } catch (SyntaxErrorException _) {
-                    // TODO: error
+                    return Optional.of(newObject);
                 }
 
                 if (member.isEmpty()) report("object has trailing comma");

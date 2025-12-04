@@ -93,8 +93,35 @@ public class JsonFrame extends JFrame {
             String text = textArea.getText();
             Lexer lexer = new Lexer(text);
             lexer.lexTokens();
+            if (!lexer.getErrors().isEmpty()) {
+                String lexErrorsMsg = lexer.getErrors().stream()
+                        .map(err -> err.toString() + "\n")
+                        .reduce(String::concat)
+                        .get();
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        lexErrorsMsg,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
             Parser parser = new Parser(lexer.getTokens());
             parser.parse();
+
+            if (!parser.getErrors().isEmpty()) {
+                String parseErrorMsg = parser.getErrors().getFirst().toString();
+                JOptionPane.showMessageDialog(
+                        null,
+                        parseErrorMsg,
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
             jsonTree.setJsonModel(parser.getObject());
         });
 
